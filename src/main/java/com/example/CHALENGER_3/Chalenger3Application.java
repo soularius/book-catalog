@@ -28,13 +28,17 @@ public class Chalenger3Application implements CommandLineRunner {
 		Scanner scanner = new Scanner(System.in);
 		boolean running = true;
 
+
 		while (running) {
 			System.out.println("\n--- Menú LiterAlura ---");
 			System.out.println("1. Buscar libros en la API");
 			System.out.println("2. Listar todos los libros guardados");
 			System.out.println("3. Agregar un libro manualmente");
 			System.out.println("4. Consultar libros por autor");
-			System.out.println("5. Salir");
+			System.out.println("5. Listar todos los autores");
+			System.out.println("6. Listar autores vivos en un año");
+			System.out.println("7. Cantidad de libros por idioma");
+			System.out.println("8. Salir");
 			System.out.print("Selecciona una opción: ");
 
 			String opcion = scanner.nextLine();
@@ -53,6 +57,15 @@ public class Chalenger3Application implements CommandLineRunner {
 					consultarPorAutor(scanner);
 					break;
 				case "5":
+					listarAutores();
+					break;
+				case "6":
+					listarAutoresVivosEnAnio(scanner);
+					break;
+				case "7":
+					mostrarCantidadDeLibrosPorIdioma(scanner);
+					break;
+				case "8":
 					running = false;
 					System.out.println("¡Gracias por usar LiterAlura!");
 					break;
@@ -93,5 +106,21 @@ public class Chalenger3Application implements CommandLineRunner {
 		System.out.print("Introduce el nombre del autor: ");
 		String author = scanner.nextLine();
 		bookService.findBooksByAuthor(author);
+	}
+
+	private void listarAutores() {
+		bookService.listAllAuthors();
+	}
+
+	private void listarAutoresVivosEnAnio(Scanner scanner) {
+		System.out.print("Introduce el año para buscar autores vivos: ");
+		int year = Integer.parseInt(scanner.nextLine());
+		bookService.listAuthorsAliveInYear(year);
+	}
+
+	private void mostrarCantidadDeLibrosPorIdioma(Scanner scanner) {
+		System.out.print("Introduce el idioma para buscar libros: ");
+		String language = scanner.nextLine();
+		bookService.showBooksByLanguage(language);
 	}
 }

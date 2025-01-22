@@ -57,6 +57,16 @@ public class Author {
         this.deathYear = deathYear != null ? deathYear : "---";
     }
 
+    public boolean isAliveInYear(int year) {
+        int birth = Integer.parseInt(this.birthYear);
+        if (this.deathYear.equals("---")) {
+            return year >= birth; // Sigue vivo
+        } else {
+            int death = Integer.parseInt(this.deathYear);
+            return year >= birth && year <= death;
+        }
+    }
+
     @Override
     public String toString() {
         return "Author{" +

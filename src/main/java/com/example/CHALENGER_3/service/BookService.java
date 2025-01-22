@@ -72,9 +72,35 @@ public class BookService {
         }
     }
 
+    @Transactional
     public void listAllBooks() {
         List<Book> books = bookRepository.findAll();
-        books.forEach(book -> System.out.println(book.toString()));
+        books.forEach(book -> System.out.println(book));
+    }
+
+    @Transactional
+    public void listAllAuthors() {
+        List<Author> authors = authorRepository.findAll();
+        authors.forEach(author -> {
+            System.out.println("Nombre: " + author.getName());
+            System.out.println("Año de nacimiento: " + author.getBirthYear());
+            System.out.println("Año de fallecimiento: " + author.getDeathYear());
+        });
+    }
+
+    @Transactional
+    public void listAuthorsAliveInYear(int year) {
+        List<Author> authors = authorRepository.findAll();
+        System.out.println("Autores vivos en el año " + year + ":");
+        authors.stream()
+                .filter(author -> {
+                    try {
+                        return author.isAliveInYear(year);
+                    } catch (NumberFormatException e) {
+                        return false; // Manejar casos donde birthYear o deathYear no son válidos
+                    }
+                })
+                .forEach(author -> System.out.println("  - " + author.getName()));
     }
 
     @Transactional
@@ -118,6 +144,12 @@ public class BookService {
         System.out.println("Libro guardado: " + book.getTitle());
     }
 
+    @Transactional
+    public void showBooksByLanguage(String language) {
+        Long count = bookRepository.countBooksByLanguage(language);
+        System.out.println("Cantidad de libros en el idioma '" + language + "': " + count);
+    }
+
     public Optional<Book> findByTitle(String title) {
         return bookRepository.findByTitle(title);
     }
@@ -130,28 +162,42 @@ public class BookService {
         return bookRepository.findByLanguagesName(language);
     }
 
-    public void addBookManually(String title, String authorName, String birthYear, String deathYear, String languages, Integer downloadCount) {
-        // Crear un nuevo libro
+    public void addBookManually(String title, String authorName, String birthYear, String deathYear, String languageName, Integer downloadCount) {
+        // Verificar o crear autor
+        Author author = authorRepository.findByName(authorName)
+                .orElseGet(() -> {
+                    Author newAuthor = new Author();
+                    newAuthor.setName(authorName);
+                    newAuthor.setBirthYear(birthYear);
+                    newAuthor.setDeathYear(deathYear);
+                    return authorRepository.save(newAuthor); // Persistir el nuevo autor
+                });
+
+        // Verificar o crear lenguaje
+        Language language = languageRepository.findByName(languageName)
+                .orElseGet(() -> {
+                    Language newLanguage = new Language();
+                    newLanguage.setName(languageName);
+                    return languageRepository.save(newLanguage); // Persistir el nuevo lenguaje
+                });
+
+        // Crear el libro
         Book book = new Book();
         book.setTitle(title);
         book.setDownloadCount(downloadCount);
+        book.setAuthors(List.of(author)); // Asociar el autor gestionado
+        book.setLanguages(List.of(language)); // Asociar el lenguaje gestionado
 
-        // Crear un nuevo autor
-        Author author = new Author();
-        author.setName(authorName);
-        author.setName(birthYear);
-        author.setName(deathYear);
+        // Verificar si el libro ya existe
+        Optional<Book> existingBook = bookRepository.findByTitle(title);
+        if (existingBook.isPresent()) {
+            System.out.println("El libro ya existe en la base de datos: " + title);
+            return;
+        }
 
-        Language language = new Language();
-        language.setName(languages);
-
-        // Asignar autor al libro
-        book.setAuthors(List.of(author));
-        book.setLanguages(List.of(language));
-
-        // Guardar en la base de datos
+        // Guardar el libro
         bookRepository.save(book);
-        System.out.println("Libro agregado manualmente: " + title);
+        System.out.println("Libro guardado manualmente: " + title);
     }
 
     public void findBooksByAuthor(String authorName) {
