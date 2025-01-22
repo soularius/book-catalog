@@ -2,6 +2,8 @@ package com.example.CHALENGER_3.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Language {
 
@@ -9,6 +11,7 @@ public class Language {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String name;
 
     // Constructor predeterminado

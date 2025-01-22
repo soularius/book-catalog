@@ -7,8 +7,11 @@ import com.example.CHALENGER_3.model.ApiResponse;
 import com.example.CHALENGER_3.model.Author;
 import com.example.CHALENGER_3.model.Book;
 import com.example.CHALENGER_3.model.Language;
+import com.example.CHALENGER_3.repository.AuthorRepository;
 import com.example.CHALENGER_3.repository.BookRepository;
 
+import com.example.CHALENGER_3.repository.LanguageRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.net.http.HttpClient;
@@ -21,10 +24,16 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final LanguageRepository languageRepository;
 
-    public BookService(BookRepository bookRepository) {
+
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, LanguageRepository languageRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.languageRepository = languageRepository;
     }
+
 
     public void searchBooks(String keyword) {
         // Implementa la lógica de búsqueda en la API
@@ -68,12 +77,45 @@ public class BookService {
         books.forEach(book -> System.out.println(book.toString()));
     }
 
+    @Transactional
     public void addBook(Book book) {
+        // Verificar si el libro ya existe
         Optional<Book> existingBook = bookRepository.findByTitle(book.getTitle());
-        if (existingBook.isEmpty()) {
-            book.setId(null); // Asegurarse de que se genere un nuevo ID
-            bookRepository.save(book);
+        if (existingBook.isPresent()) {
+            System.out.println("El libro ya existe en la base de datos: " + book.getTitle());
+            return;
         }
+
+        if (book.getTitle().length() > 1024) {
+            book.setTitle(book.getTitle().substring(0, 1024));
+        }
+
+        // Gestionar autores
+        List<Author> managedAuthors = book.getAuthors().stream()
+                .map(author -> authorRepository.findByName(author.getName())
+                        .orElseGet(() -> {
+                            // Si el autor no existe, persistir uno nuevo
+                            author.setId(null);
+                            return authorRepository.save(author);
+                        }))
+                .toList();
+        book.setAuthors(managedAuthors);
+
+        // Gestionar lenguajes
+        List<Language> managedLanguages = book.getLanguages().stream()
+                .map(language -> languageRepository.findByName(language.getName())
+                        .orElseGet(() -> {
+                            // Si el lenguaje no existe, persistir uno nuevo
+                            language.setId(null);
+                            return languageRepository.save(language);
+                        }))
+                .toList();
+        book.setLanguages(managedLanguages);
+
+        // Persistir el libro
+        book.setId(null); // Asegurarse de que el libro sea nuevo
+        bookRepository.save(book);
+        System.out.println("Libro guardado: " + book.getTitle());
     }
 
     public Optional<Book> findByTitle(String title) {

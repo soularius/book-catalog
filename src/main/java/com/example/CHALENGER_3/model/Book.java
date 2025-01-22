@@ -14,12 +14,14 @@ public class Book {
     private Long id;
 
     @JsonAlias("title")
+    @Column(length = 1024)
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // Muchos libros - Muchos autores
+    @ManyToMany
     private List<Author> authors;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<Language> languages;
 
     @JsonAlias("download_count")
