@@ -11,8 +11,8 @@ El objetivo principal del proyecto es:
 1. Buscar libros y sus autores desde una API pública.
 2. Guardar los libros y autores en una base de datos relacional.
 3. Listar libros y autores con estadísticas avanzadas, como:
-    - Autores vivos en un año específico.
-    - Cantidad de libros en un idioma específico.
+   - Autores vivos en un año específico.
+   - Cantidad de libros en un idioma específico.
 4. Proveer interacción vía consola con un menú para que el usuario explore la base de datos.
 
 ---
@@ -20,20 +20,27 @@ El objetivo principal del proyecto es:
 ## **Funcionalidades**
 
 1. **Buscar libros desde la API**:
-    - Consume datos JSON desde una API pública para almacenar libros y autores.
-    - Relación Many-to-Many para gestionar libros con múltiples autores y lenguajes.
+   - Consume datos JSON desde una API pública para almacenar libros y autores.
+   - Relación Many-to-Many para gestionar libros con múltiples autores y lenguajes.
 
 2. **Agregar libros manualmente**:
-    - Los usuarios pueden añadir libros ingresando detalles como título, autor, idioma y estadísticas.
+   - Los usuarios pueden añadir libros ingresando detalles como título, autor, idioma y estadísticas.
 
 3. **Listar información guardada**:
-    - Todos los libros.
-    - Todos los autores.
-    - Autores vivos en un año específico.
-    - Cantidad de libros en un idioma específico.
+   - Todos los libros.
+   - Todos los autores.
+   - Autores vivos en un año específico.
+   - Cantidad de libros en un idioma específico.
 
 4. **Estadísticas**:
-    - Consulta el número de libros disponibles en idiomas específicos.
+   - Consulta el número de libros disponibles en idiomas específicos.
+
+5. **Nuevas funcionalidades**:
+   - Mostrar estadísticas de descargas de libros (promedio, máximo, mínimo, total).
+   - Top 10 libros más descargados.
+   - Buscar autor por nombre con coincidencias parciales.
+   - Listar autores por año de nacimiento.
+   - Listar autores por año de fallecimiento.
 
 ---
 
@@ -116,7 +123,12 @@ Al ejecutar la aplicación, verás un menú como este:
 5. Listar todos los autores
 6. Listar autores vivos en un año
 7. Cantidad de libros por idioma
-8. Salir
+8. Mostrar estadísticas de descargas
+9. Top 10 libros más descargados
+10. Buscar autor por nombre
+11. Listar autores por año de nacimiento
+12. Listar autores por año de fallecimiento
+13. Salir
 ```
 
 ### **Consultar Autores Vivos**
@@ -126,6 +138,23 @@ Introduce el año para buscar autores vivos: 1900
 Autores vivos en el año 1900:
   - Kartini, Raden Adjeng
   - Joshua Bloch
+```
+
+### **Top 10 Libros Más Descargados**
+```plaintext
+Top 10 libros más descargados:
+1. Effective Java - Descargas: 1200
+2. Clean Code - Descargas: 900
+...
+```
+
+### **Estadísticas de Descargas**
+```plaintext
+Estadísticas de descargas:
+Total de descargas: 2100
+Promedio de descargas: 700
+Máximo de descargas: 1200
+Mínimo de descargas: 200
 ```
 
 ---
