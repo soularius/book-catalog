@@ -157,19 +157,5 @@ Máximo de descargas: 1200
 Mínimo de descargas: 200
 ```
 
----
-
-## **Mejoras Futuras**
-1. Implementar validaciones adicionales en las entradas del usuario.
-2. Ampliar estadísticas para incluir consultas por año de publicación.
-3. Migrar a una interfaz gráfica utilizando Spring MVC o Thymeleaf.
-
----
-
-## **Contribuciones**
-¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, abre un issue o envía un pull request.
-
----
-
 ## **Licencia**
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más información.
