@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,6 +86,7 @@ public class BookService {
             System.out.println("Nombre: " + author.getName());
             System.out.println("Año de nacimiento: " + author.getBirthYear());
             System.out.println("Año de fallecimiento: " + author.getDeathYear());
+            System.out.println("***********");
         });
     }
 
@@ -150,6 +152,65 @@ public class BookService {
         System.out.println("Cantidad de libros en el idioma '" + language + "': " + count);
     }
 
+    @Transactional
+    public void generateDownloadStatistics() {
+        List<Book> books = bookRepository.findAll();
+        DoubleSummaryStatistics stats = books.stream()
+                .mapToDouble(Book::getDownloadCount)
+                .summaryStatistics();
+
+        System.out.println("Estadísticas de descargas:");
+        System.out.println("Total de descargas: " + stats.getSum());
+        System.out.println("Promedio de descargas: " + stats.getAverage());
+        System.out.println("Máximo de descargas: " + stats.getMax());
+        System.out.println("Mínimo de descargas: " + stats.getMin());
+    }
+
+    @Transactional
+    public void showTop10Books() {
+        List<Book> books = bookRepository.findAll();
+        System.out.println("Top 10 libros más descargados:");
+        books.stream()
+                .sorted((b1, b2) -> b2.getDownloadCount().compareTo(b1.getDownloadCount()))
+                .limit(10)
+                .forEach(book -> System.out.println(book.getTitle() + " - Descargas: " + book.getDownloadCount()));
+    }
+
+    @Transactional
+    public void searchAuthorByName(String name) {
+        Optional<Author> author = authorRepository.findByName(name);
+        if (author.isPresent()) {
+            System.out.println("Autor encontrado:");
+            System.out.println("Nombre: " + author.get().getName());
+            System.out.println("Año de nacimiento: " + author.get().getBirthYear());
+            System.out.println("Año de fallecimiento: " + author.get().getDeathYear());
+        } else {
+            System.out.println("No se encontró un autor con el nombre: " + name);
+        }
+    }
+
+    @Transactional
+    public void listAuthorsByBirthYear(String birthYear) {
+        List<Author> authors = authorRepository.findByBirthYear(birthYear);
+        if (authors.isEmpty()) {
+            System.out.println("No se encontraron autores nacidos en el año " + birthYear);
+        } else {
+            System.out.println("Autores nacidos en el año " + birthYear + ":");
+            authors.forEach(author -> System.out.println("  - " + author.getName()));
+        }
+    }
+
+    @Transactional
+    public void listAuthorsByDeathYear(String deathYear) {
+        List<Author> authors = authorRepository.findByDeathYear(deathYear);
+        if (authors.isEmpty()) {
+            System.out.println("No se encontraron autores fallecidos en el año " + deathYear);
+        } else {
+            System.out.println("Autores fallecidos en el año " + deathYear + ":");
+            authors.forEach(author -> System.out.println("  - " + author.getName()));
+        }
+    }
+
     public Optional<Book> findByTitle(String title) {
         return bookRepository.findByTitle(title);
     }
@@ -205,7 +266,19 @@ public class BookService {
         if (books.isEmpty()) {
             System.out.println("No se encontraron libros para el autor: " + authorName);
         } else {
-            books.forEach(book -> System.out.println("Título: " + book.getTitle()));
+            System.out.println("Libros encontrados para el autor '" + authorName + "':");
+            books.forEach(book -> {
+                System.out.println("Título: " + book.getTitle());
+                System.out.println("  - Idiomas: ");
+                book.getLanguages().forEach(language -> System.out.println("    * " + language.getName()));
+                System.out.println("  - Descargas: " + book.getDownloadCount());
+                System.out.println("  - Autor(es): ");
+                book.getAuthors().forEach(author -> {
+                    System.out.println("    * Nombre: " + author.getName());
+                    System.out.println("      Año de nacimiento: " + author.getBirthYear());
+                    System.out.println("      Año de fallecimiento: " + author.getDeathYear());
+                });
+            });
         }
     }
 }

@@ -38,7 +38,12 @@ public class Chalenger3Application implements CommandLineRunner {
 			System.out.println("5. Listar todos los autores");
 			System.out.println("6. Listar autores vivos en un año");
 			System.out.println("7. Cantidad de libros por idioma");
-			System.out.println("8. Salir");
+			System.out.println("8. Mostrar estadísticas de descargas");
+			System.out.println("9. Top 10 libros más descargados");
+			System.out.println("10. Buscar autor por nombre");
+			System.out.println("11. Listar autores por año de nacimiento");
+			System.out.println("12. Listar autores por año de fallecimiento");
+			System.out.println("13. Salir");
 			System.out.print("Selecciona una opción: ");
 
 			String opcion = scanner.nextLine();
@@ -66,6 +71,21 @@ public class Chalenger3Application implements CommandLineRunner {
 					mostrarCantidadDeLibrosPorIdioma(scanner);
 					break;
 				case "8":
+					mostrarEstadisticasDescargas();
+					break;
+				case "9":
+					mostrarTop10Libros();
+					break;
+				case "10":
+					buscarAutorPorNombre(scanner);
+					break;
+				case "11":
+					listarAutoresPorNacimiento(scanner);
+					break;
+				case "12":
+					listarAutoresPorFallecimiento(scanner);
+					break;
+				case "13":
 					running = false;
 					System.out.println("¡Gracias por usar LiterAlura!");
 					break;
@@ -122,5 +142,31 @@ public class Chalenger3Application implements CommandLineRunner {
 		System.out.print("Introduce el idioma para buscar libros: ");
 		String language = scanner.nextLine();
 		bookService.showBooksByLanguage(language);
+	}
+
+	private void mostrarEstadisticasDescargas() {
+		bookService.generateDownloadStatistics();
+	}
+
+	private void mostrarTop10Libros() {
+		bookService.showTop10Books();
+	}
+
+	private void buscarAutorPorNombre(Scanner scanner) {
+		System.out.print("Introduce el nombre del autor a buscar: ");
+		String name = scanner.nextLine();
+		bookService.searchAuthorByName(name);
+	}
+
+	private void listarAutoresPorNacimiento(Scanner scanner) {
+		System.out.print("Introduce el año de nacimiento para buscar autores: ");
+		String year = scanner.nextLine();
+		bookService.listAuthorsByBirthYear(year);
+	}
+
+	private void listarAutoresPorFallecimiento(Scanner scanner) {
+		System.out.print("Introduce el año de fallecimiento para buscar autores: ");
+		String year = scanner.nextLine();
+		bookService.listAuthorsByDeathYear(year);
 	}
 }
